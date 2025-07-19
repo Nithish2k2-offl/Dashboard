@@ -18,6 +18,7 @@ public class Sample {
 
     @GetMapping("/hello")
     public String hello() {
+        System.out.println("DB branch");
         return "Hello, World!";
     }
 
