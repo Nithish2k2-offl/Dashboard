@@ -21,9 +21,9 @@ public class Sample {
         return "Hello, World!";
     }
 
-    @GetMapping("/hellov1")
+    @GetMapping("/helloAgain")
     public String sayHello() {
-        return "Hello v1";
+        return "Hello Again!";
     }
 
     @PostMapping("/addUser")

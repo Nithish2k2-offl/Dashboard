@@ -6,28 +6,28 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "users")
+@Table(name = "notes")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserEntity {
+public class NoteEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private UUID id;
 
-    @Column(unique = true, nullable = false)
-    private String email;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserEntity user;
 
-    @Column(nullable = false)
-    private String username;
+    private String title;
 
-    @Column(name = "password_hash", nullable = false)
-    private String passwordHash;
+    @Column(columnDefinition = "TEXT")
+    private String content;
 
-    @Column(name = "discord_id")
-    private String discordId;
+    @Column(name = "last_edited")
+    private OffsetDateTime lastEdited;
 
     @Column(name = "created_at")
     private OffsetDateTime createdAt;
@@ -35,3 +35,4 @@ public class UserEntity {
     @Column(name = "updated_at")
     private OffsetDateTime updatedAt;
 }
+

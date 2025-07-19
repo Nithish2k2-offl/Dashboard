@@ -6,28 +6,25 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "users")
+@Table(name = "settings")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserEntity {
+public class SettingsEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private UUID id;
 
-    @Column(unique = true, nullable = false)
-    private String email;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
+    private UserEntity user;
 
-    @Column(nullable = false)
-    private String username;
+    private String theme; // light, dark
 
-    @Column(name = "password_hash", nullable = false)
-    private String passwordHash;
-
-    @Column(name = "discord_id")
-    private String discordId;
+    @Column(name = "notification_prefs", columnDefinition = "TEXT")
+    private String notificationPrefs; // store JSON string
 
     @Column(name = "created_at")
     private OffsetDateTime createdAt;

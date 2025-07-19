@@ -6,28 +6,29 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "users")
+@Table(name = "tasks")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserEntity {
+public class TaskEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private UUID id;
 
-    @Column(unique = true, nullable = false)
-    private String email;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserEntity user;
 
-    @Column(nullable = false)
-    private String username;
+    private String title;
+    private String description;
 
-    @Column(name = "password_hash", nullable = false)
-    private String passwordHash;
+    private String status; // PENDING, COMPLETED, etc.
+    private String priority; // LOW, NORMAL, HIGH
 
-    @Column(name = "discord_id")
-    private String discordId;
+    @Column(name = "due_date")
+    private OffsetDateTime dueDate;
 
     @Column(name = "created_at")
     private OffsetDateTime createdAt;
@@ -35,3 +36,4 @@ public class UserEntity {
     @Column(name = "updated_at")
     private OffsetDateTime updatedAt;
 }
+
