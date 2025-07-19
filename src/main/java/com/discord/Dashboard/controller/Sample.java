@@ -24,6 +24,7 @@ public class Sample {
 
     @GetMapping("/helloAgain")
     public String sayHello() {
+        System.out.println("DB branch again");
         return "Hello Again!";
     }
 
