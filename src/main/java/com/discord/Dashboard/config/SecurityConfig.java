@@ -7,6 +7,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+// This configuration class sets up security for the application, allowing all HTTP methods to all endpoints.
 @Configuration
 public class SecurityConfig {
 

@@ -18,6 +18,7 @@ public class UserController {
 
     private final AuthService authService;
 
+    // To register a new user
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody UserRegisterDto dto){
         UserEntity user = authService.register(dto);
