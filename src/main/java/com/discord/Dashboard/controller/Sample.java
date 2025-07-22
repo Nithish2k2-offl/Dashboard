@@ -1,44 +1,41 @@
 package com.discord.Dashboard.controller;
 
 import com.discord.Dashboard.entity.UserEntity;
-import com.discord.Dashboard.UserRepository;
+import com.discord.Dashboard.repo.UserRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/api")
+@AllArgsConstructor
 public class Sample {
     @Autowired
     private final UserRepository userRepository;
 
-    public Sample(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
     @GetMapping("/hello")
     public String hello() {
-        System.out.println("DB branch");
         return "Hello, World!";
     }
 
     @GetMapping("/helloAgain")
     public String sayHello() {
-        System.out.println("DB branch again");
         return "Hello Again!";
     }
 
-    @PostMapping("/addUser")
+    @PostMapping("/adduser")
     public ResponseEntity<UserEntity> addUser(@RequestBody UserEntity UserEntity) {
-        System.out.println("hi");
         UserEntity obj = userRepository.save(UserEntity);
         return ResponseEntity.ok(obj);
     }
 
-    @GetMapping("/getUser/{id}")
-    public UserEntity getUser(@PathVariable Long id) {
-        return userRepository.findById(id).orElse(null);
+    @GetMapping("/getuser/{id}")
+    public ResponseEntity<UserEntity> getUser(@PathVariable UUID id) {
+        UserEntity obj = userRepository.findById(id).orElse(null);
+        return ResponseEntity.ok(obj);
     }
-
 
 }

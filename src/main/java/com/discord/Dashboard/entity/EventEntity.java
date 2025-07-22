@@ -1,6 +1,5 @@
 package com.discord.Dashboard.entity;
 
-
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.OffsetDateTime;
@@ -15,7 +14,7 @@ import java.util.UUID;
 public class EventEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)

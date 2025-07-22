@@ -14,14 +14,14 @@ import java.util.UUID;
 public class SettingsEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private UUID id;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private UserEntity user;
 
-    private String theme; // light, dark
+    private String theme;
 
     @Column(name = "notification_prefs", columnDefinition = "TEXT")
     private String notificationPrefs; // store JSON string
