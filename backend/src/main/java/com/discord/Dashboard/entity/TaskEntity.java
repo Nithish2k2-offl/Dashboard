@@ -1,7 +1,13 @@
 package com.discord.Dashboard.entity;
 
+import com.discord.Dashboard.constants.TaskPriority;
+import com.discord.Dashboard.constants.TaskStatus;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
@@ -21,11 +27,16 @@ public class TaskEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
+    @Column(nullable = false)
     private String title;
+
     private String description;
 
-    private String status; // PENDING, COMPLETED, etc.
-    private String priority; // LOW, NORMAL, HIGH
+    @Enumerated(EnumType.STRING)
+    private TaskStatus status;
+
+    @Enumerated(EnumType.STRING)
+    private TaskPriority priority;
 
     @Column(name = "due_date")
     private OffsetDateTime dueDate;

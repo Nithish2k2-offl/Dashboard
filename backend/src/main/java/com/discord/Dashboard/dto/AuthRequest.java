@@ -1,6 +1,8 @@
 package com.discord.Dashboard.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 @Data
 public class AuthRequest {

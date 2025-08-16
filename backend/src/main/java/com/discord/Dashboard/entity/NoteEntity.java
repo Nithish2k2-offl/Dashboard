@@ -1,7 +1,11 @@
 package com.discord.Dashboard.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
@@ -25,9 +29,6 @@ public class NoteEntity {
 
     @Column(columnDefinition = "TEXT")
     private String content;
-
-    @Column(name = "last_edited")
-    private OffsetDateTime lastEdited;
 
     @Column(name = "created_at")
     private OffsetDateTime createdAt;

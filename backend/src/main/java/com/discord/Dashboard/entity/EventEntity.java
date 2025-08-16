@@ -21,14 +21,20 @@ public class EventEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
+    @Column(nullable = false)
     private String title;
+
+    private String description;
 
     @Column(name = "event_date")
     private OffsetDateTime eventDate;
 
     private String location;
 
-    @Column(name = "reminder_time")
+    private OffsetDateTime startTime;
+    private OffsetDateTime endTime;
+
+    @Column(name = "reminder_time", nullable = true)
     private OffsetDateTime reminderTime;
 
     @Column(name = "created_at")

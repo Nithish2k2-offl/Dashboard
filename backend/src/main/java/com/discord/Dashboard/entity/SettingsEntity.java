@@ -1,9 +1,28 @@
 package com.discord.Dashboard.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.time.OffsetDateTime;
 import java.util.UUID;
+
+//import com.vladmihalcea.hibernate.type.json.JsonType;
+//import org.hibernate.annotations.Type;
+//@Column(name = "notification_prefs", columnDefinition = "jsonb")
+//private Map<String, Object> notificationPrefs;
+/*
+* notificationPrefs store json data , for the single user
+* like this.
+* {
+  "email": true,
+  "sms": false,
+  "discordDM": true,
+  "dailySummaryTime": "08:00"
+}
+*/
 
 @Entity
 @Table(name = "settings")
@@ -14,7 +33,7 @@ import java.util.UUID;
 public class SettingsEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -23,8 +42,8 @@ public class SettingsEntity {
 
     private String theme;
 
-    @Column(name = "notification_prefs", columnDefinition = "TEXT")
-    private String notificationPrefs; // store JSON string
+    @Column
+    private boolean notificationEnabled;
 
     @Column(name = "created_at")
     private OffsetDateTime createdAt;

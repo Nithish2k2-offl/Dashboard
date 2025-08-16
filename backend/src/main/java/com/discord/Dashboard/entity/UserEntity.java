@@ -29,6 +29,9 @@ public class UserEntity {
     @Column(name = "discord_id")
     private String discordId;
 
+    @Column(name = "active_token")
+    private String activeToken;
+
     @Column(name = "created_at")
     private OffsetDateTime createdAt;
 

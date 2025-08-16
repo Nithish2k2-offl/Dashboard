@@ -17,9 +17,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final AuthServiceImpl authService;
     private final UserServiceImpl userService;
-    private final UserRepository repo;
 
     @GetMapping("/getusers")
     public ResponseEntity<List<UserEntity>> getAllUsers() {

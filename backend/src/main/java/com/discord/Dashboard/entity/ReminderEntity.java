@@ -34,14 +34,15 @@ public class ReminderEntity {
     private EventEntity event;
 
     @Column(nullable = false)
-    private OffsetDateTime time;
+    private OffsetDateTime triggerTime;
 
-    private boolean sent;
+    private String message;
 
     @Column(name = "created_at")
     private OffsetDateTime createdAt;
 
     @Column(name = "updated_at")
     private OffsetDateTime updatedAt;
+
 }
 
