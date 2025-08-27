@@ -2,10 +2,8 @@ package com.discord.Dashboard.service;
 
 import com.discord.Dashboard.dto.AuthRequest;
 import com.discord.Dashboard.dto.AuthResponse;
-import com.discord.Dashboard.entity.ActiveSession;
 import com.discord.Dashboard.entity.TokenEntity;
 import com.discord.Dashboard.entity.UserEntity;
-import com.discord.Dashboard.repo.ActiveSessionRepository;
 import com.discord.Dashboard.repo.TokenRepository;
 import com.discord.Dashboard.repo.UserRepository;
 import lombok.AllArgsConstructor;
@@ -27,12 +25,8 @@ public class AuthServiceImpl {
     private final JwtServiceImpl jwtService;
     private final TokenRepository tokenRepository;
     private final AuthenticationManager authManager;
-    private final ActiveSessionRepository activeSessionRepository;
 
     public AuthResponse register(AuthRequest dto) {
-        if (activeSessionRepository.findTopByOrderByIdAsc().isPresent()) {
-            throw new RuntimeException("from register...Another user already logged in. Logout first.");
-        }
         UserEntity user = UserEntity.builder()
                 .email(dto.getEmail())
                 .username(dto.getUsername())
@@ -41,84 +35,62 @@ public class AuthServiceImpl {
                 .updatedAt(OffsetDateTime.now())
                 .build();
         userRepository.save(user);
+        ensureNoActiveUserOrSameUser(user);
 
-        String token = jwtService.generateToken(user.getEmail(), Map.of("username", user.getUsername()));
-        // Save the token in the database
-        TokenEntity tokenEntity = TokenEntity.builder()
-                .token(token)
-                .revoked(false)
-                .user(user)
-                .build();
-        tokenRepository.save(tokenEntity);
-
-        ActiveSession session = new ActiveSession();
-        session.setUser(user);
-        session.setStartedAt(OffsetDateTime.now());
-        activeSessionRepository.save(session);
-
-        return new AuthResponse(token);
+        return issueToken(user);
     }
 
     public AuthResponse login(AuthRequest dto) {
-        try {
-            activeSessionRepository.findTopByOrderByIdAsc().ifPresent(session -> {
-                if (!session.getUser().getEmail().equals(dto.getEmail())) {
-                    throw new RuntimeException("from login...Another user already logged in. Logout first.");
-                }
-            });
-            authManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword())
-            );
+        authManager.authenticate(
+                new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword())
+        );
 
-            UserEntity user = userRepository.findByEmail(dto.getEmail()).orElseThrow();
+        UserEntity user = userRepository.findByEmail(dto.getEmail()).orElseThrow();
 
-            // Revoke old tokens
-            List<TokenEntity> oldTokens = tokenRepository.findAllByUserAndRevokedFalse(user);
-            oldTokens.forEach(t -> t.setRevoked(true));
-            tokenRepository.saveAll(oldTokens);
+        ensureNoActiveUserOrSameUser(user);
+        // Revoke old tokens
+        List<TokenEntity> oldTokens = tokenRepository.findAllByUserAndRevokedFalse(user);
+        oldTokens.forEach(t -> t.setRevoked(true));
+        tokenRepository.saveAll(oldTokens);
 
-            // Issue new token
-            String token = jwtService.generateToken(user.getEmail(), Map.of("username", user.getUsername()));
-
-            // Save new token
-            TokenEntity tokenEntity = TokenEntity.builder()
-                    .token(token)
-                    .revoked(false)
-                    .user(user)
-                    .build();
-            tokenRepository.save(tokenEntity);
-
-            if (activeSessionRepository.findTopByOrderByIdAsc().isEmpty()) {
-                ActiveSession session = new ActiveSession();
-                session.setUser(user);
-                session.setStartedAt(OffsetDateTime.now());
-                activeSessionRepository.save(session);
-            }
-
-            return new AuthResponse(token);
-
-        } catch (Exception e) {
-            System.out.println("Authentication failed: " + e.getMessage());
-            throw e;
-        }
+        return issueToken(user);
     }
 
     public void logout(String token) {
-        // Find the token
         TokenEntity tokenEntity = tokenRepository.findByToken(token)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid or missing token"));
+                .orElseThrow(() -> new IllegalArgumentException("Invalid or missing token.."));
 
-        UserEntity user = tokenEntity.getUser();
-
-        // Revoke all active tokens for this user (idempotent)
-        List<TokenEntity> tokens = tokenRepository.findAllByUserAndRevokedFalse(user);
-        if (!tokens.isEmpty()) {
-            tokens.forEach(t -> t.setRevoked(true));
-            tokenRepository.saveAll(tokens);
+        if(tokenEntity.isRevoked()){
+            throw new RuntimeException("Token already revoked or expired...");
         }
+        // Find the token
+        List<TokenEntity> tokens = tokenRepository.findAllByUserAndRevokedFalse(tokenEntity.getUser());
+        tokens.forEach(t -> t.setRevoked(true));
+        tokenRepository.saveAll(tokens);
+    }
 
-        // Clear active session (safe even if already deleted)
-        activeSessionRepository.deleteAll();
+    private AuthResponse issueToken(UserEntity user) {
+        String token = jwtService.generateToken(user.getEmail(), Map.of("username", user.getUsername()));
+
+        TokenEntity tokenEntity = TokenEntity.builder()
+                .token(token)
+                .revoked(false)
+                .issuedAt(OffsetDateTime.now())
+                .expiresAt(OffsetDateTime.now().plusHours(2))
+                .user(user)
+                .build();
+        tokenRepository.save(tokenEntity);
+        return new AuthResponse(token);
+    }
+
+    private void ensureNoActiveUserOrSameUser(UserEntity user) {
+        List<TokenEntity> activeTokens = tokenRepository.findAllByRevokedFalse();
+        if (!activeTokens.isEmpty()) {
+            UserEntity activeUser = activeTokens.get(0).getUser();
+            if (!activeUser.getId().equals(user.getId())) {
+                throw new RuntimeException("Another user is already logged in. So log out first...");
+            }
+        }
     }
 
 

@@ -17,8 +17,6 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthServiceImpl authService;
-    private final TokenRepository tokenRepository;
-    private final JwtServiceImpl jwtService;
 
     @PostMapping("/register")
     public AuthResponse register(@RequestBody AuthRequest dto) {
