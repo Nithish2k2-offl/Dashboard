@@ -26,7 +26,7 @@ public class UserEntity {
     @Column(name = "password_hash", nullable = false)
     private String passwordHash;
 
-    @Column(name = "discord_id")
+    @Column(name = "discord_id", unique = true)
     private String discordId;
 
     @Column(name = "active_token")

@@ -26,12 +26,14 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
+        System.out.println("PasswordEncoder bean created");
         return new BCryptPasswordEncoder();
     }
 
     // Configure security settings for the application
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthFilter) throws Exception {
+        System.out.println("Configuring SecurityFilterChain");
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
@@ -46,6 +48,7 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
+        System.out.println("UserDetailsService bean created");
         return email -> {
             UserEntity user = userRepository.findByEmail(email)
                     .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
@@ -59,11 +62,13 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        System.out.println("AuthenticationManager bean created");
         return config.getAuthenticationManager();
     }
 
     @Bean
     public DaoAuthenticationProvider daoAuthProvider() {
+        System.out.println("DaoAuthenticationProvider bean created");
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(email -> userDetailsService().loadUserByUsername(email));
         provider.setPasswordEncoder(passwordEncoder());

@@ -60,7 +60,7 @@ public class AuthServiceImpl {
         TokenEntity tokenEntity = tokenRepository.findByToken(token)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid or missing token.."));
 
-        if(tokenEntity.isRevoked()){
+        if (tokenEntity.isRevoked()) {
             throw new RuntimeException("Token already revoked or expired...");
         }
         // Find the token

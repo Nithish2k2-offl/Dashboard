@@ -2,9 +2,7 @@ package com.discord.Dashboard.controller;
 
 import com.discord.Dashboard.dto.AuthRequest;
 import com.discord.Dashboard.dto.AuthResponse;
-import com.discord.Dashboard.repo.TokenRepository;
 import com.discord.Dashboard.service.AuthServiceImpl;
-import com.discord.Dashboard.service.JwtServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

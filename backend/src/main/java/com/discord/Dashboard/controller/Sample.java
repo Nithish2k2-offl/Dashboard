@@ -21,15 +21,9 @@ public class Sample {
         return "Hello, World!";
     }
 
-    @GetMapping("/helloAgain")
+    @GetMapping("/hi")
     public String sayHello() {
-        return "Hello Again!";
-    }
-
-    @PostMapping("/adduser")
-    public ResponseEntity<UserEntity> addUser(@RequestBody UserEntity UserEntity) {
-        UserEntity obj = userRepository.save(UserEntity);
-        return ResponseEntity.ok(obj);
+        return "Hii there!";
     }
 
     @GetMapping("/getuser/{id}")

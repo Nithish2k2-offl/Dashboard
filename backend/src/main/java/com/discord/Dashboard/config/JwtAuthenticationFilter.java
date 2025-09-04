@@ -1,7 +1,6 @@
 package com.discord.Dashboard.config;
 
-import com.discord.Dashboard.entity.UserEntity;
-import com.discord.Dashboard.repo.*;
+import com.discord.Dashboard.repo.TokenRepository;
 import com.discord.Dashboard.service.JwtServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -32,6 +31,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     @NotNull HttpServletResponse response,
                                     @NotNull FilterChain filterChain) throws ServletException, IOException {
 
+        System.out.println("doFilterInternal called");
         String authHeader = request.getHeader("Authorization");
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
