@@ -52,11 +52,11 @@ public class SecurityConfig {
         return email -> {
             UserEntity user = userRepository.findByEmail(email)
                     .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
-            return org.springframework.security.core.userdetails.User
-                    .withUsername(user.getEmail())
-                    .password(user.getPasswordHash())
-                    .authorities("USER")
-                    .build();
+            return new CustomUserDetails(
+                    user.getId(),
+                    user.getEmail(),
+                    user.getPasswordHash()
+            );
         };
     }
 
@@ -70,7 +70,7 @@ public class SecurityConfig {
     public DaoAuthenticationProvider daoAuthProvider() {
         System.out.println("DaoAuthenticationProvider bean created");
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(email -> userDetailsService().loadUserByUsername(email));
+        provider.setUserDetailsService(userDetailsService());
         provider.setPasswordEncoder(passwordEncoder());
         return provider;
     }
